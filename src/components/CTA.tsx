@@ -16,6 +16,7 @@ export const CTA = () => (
       href="https://github.com/waptik/tiptap-react"
       flexGrow={3}
       mx={2}
+      _hover={{textDecoration:"none"}}
     >
       <Button width="100%" variant="solid" colorScheme="blue">
         View Repo
