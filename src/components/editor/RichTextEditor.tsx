@@ -54,7 +54,6 @@ import theme from "../../theme";
 interface RichTextEditorProps {
 	text: string;
 	setText: React.Dispatch<React.SetStateAction<string>>;
-	type: string;
 	charLimit?: number;
 	withImage?: boolean;
 	placeholder?: string;
@@ -68,7 +67,7 @@ interface FormatButtonProps {
 	label: string;
 	icon: EmotionIcon;
 	isSmall?: boolean;
-	onClick?: React.MouseEventHandler<HTMLDivElement> | ((t: File) => void);
+	onClick?: React.MouseEventHandler<HTMLButtonElement> | ((t: File) => void);
 	isActive?: boolean;
 	type?: string;
 }
@@ -163,6 +162,7 @@ function FormatButton({ label, type, icon, isSmall = false, onClick, isActive }:
 					color: bgColor,
 				}}
 				_focus={{ outline: "none" }}
+				onClick={onClick as unknown as React.MouseEventHandler<HTMLButtonElement>}
 				transition="var(--transition)"
 				icon={<Box as={Icon} boxSize={isSmall ? 4 : 5} mt={isSmall ? "0.5" : undefined} />}
 			>
@@ -181,11 +181,10 @@ function FormatGroup({ children }: StackProps) {
 	);
 }
 
-const RichTextEditor = ({ text, charLimit, setText, type, withImage, placeholder }: RichTextEditorProps) => {
+const RichTextEditor = ({ text, charLimit, setText, withImage, placeholder }: RichTextEditorProps) => {
 	const { colorMode } = useColorMode();
 	const isDark = colorMode === "dark";
 	const [image, setImage] = useState<File | undefined>();
-	const bg = useColorModeValue("white", "gray.200");
 	const borderColor = isDark ? theme.colors.whiteAlpha[900] : theme.colors.gray[900];
 
 
@@ -195,7 +194,7 @@ const RichTextEditor = ({ text, charLimit, setText, type, withImage, placeholder
       let fr = new FileReader()
 
       fr.onload = function () {
-        resolve(fr.result)
+        resolve(fr.result as string)
       }
 
       fr.onerror = function () {
@@ -207,7 +206,7 @@ const RichTextEditor = ({ text, charLimit, setText, type, withImage, placeholder
   }
 
 	const handleUpload = async (file: File) => {
-		const result = await readAsFileDataURL(file)
+		const result = await readFileAsDataURL(file)
 
 		return result;
 	};
